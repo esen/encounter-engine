@@ -17,10 +17,6 @@ class JoomlaSession < Joomla_Database
 	set_primary_key 'session_id'
 end
 
-class Session < ActiveRecord::Base
-	set_table_name 'sessions'
-	set_primary_key 'id'
-end
 # Till here
 
 class MerbAuthSlicePassword::Sessions < MerbAuthSlicePassword::Application
