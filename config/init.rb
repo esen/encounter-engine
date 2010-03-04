@@ -8,6 +8,8 @@ use_template_engine :erb
 Merb::Config.use do |c|
   c[:use_mutex] = false
   c[:session_store] = 'activerecord'  # can also be 'memory', 'memcache', 'container', 'datamapper
+	c[:joomla_bridge] = "ON"
+	c[:synchronize_registration_with_joomla] = "ON"
 
   # cookie session store configuration
   c[:session_secret_key]  = '317d0a0e1a381404dd8edc5527896ecd140d117d'  # required for cookie session store

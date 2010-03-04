@@ -5,6 +5,7 @@ class UserMigration < ActiveRecord::Migration
       t.string :name
       t.string :crypted_password
       t.string :salt
+			t.integer :block
       t.timestamps
     end
   end

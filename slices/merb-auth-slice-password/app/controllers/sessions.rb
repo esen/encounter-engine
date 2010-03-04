@@ -1,7 +1,5 @@
 # Classes needed for authentication bridge with Joomla
 
-$JOOMLA_BRIDGE = "ON"
-
 class Joomla_Database < ActiveRecord::Base
 	establish_connection(
 		:adapter  => "mysql",
@@ -33,10 +31,20 @@ class MerbAuthSlicePassword::Sessions < MerbAuthSlicePassword::Application
   after :redirect_after_logout, :only => :destroy
 
   def update
+		if (session.user.block == 1) then session.abandon! end
     "Add an after filter to do stuff after login"
   end
 
   def destroy
+		# Code neede for authentication bridge with Joomla
+		if Merb::Config[:joomla_bridge] == "ON" then
+			enc_session_id = cookies[Merb::Config[:session_id_key]]
+			enc_ses_data = Merb::ActiveRecordSessionStore.retrieve_session(enc_session_id)
+			enc_user_id = enc_ses_data["user"] if enc_ses_data!=nil
+
+			JoomlaSession.update_all("guest = 1, userid = 0, usertype = '', gid = 0, client_id = 0, username = '', data = '' ", "userid = #{enc_user_id}") if enc_user_id
+		end
+		# till here
     "Add an after filter to do stuff after logout"
   end
 
@@ -49,17 +57,6 @@ class MerbAuthSlicePassword::Sessions < MerbAuthSlicePassword::Application
 
   # @overwritable
   def redirect_after_logout
-
-		# Code neede for authentication bridge with Joomla
-		if $JOOMLA_BRIDGE == "ON" then
-			enc_session_id = cookies[Merb::Config[:session_id_key]]
-			enc_ses_data = Merb::ActiveRecordSessionStore.retrieve_session(enc_session_id)
-			enc_user_id = enc_ses_data["user"] if enc_ses_data!=nil
-
-			JoomlaSession.delete_all("userid = #{enc_user_id}") if enc_user_id
-		end
-		# till here
-
     redirect "/"
   end
 
